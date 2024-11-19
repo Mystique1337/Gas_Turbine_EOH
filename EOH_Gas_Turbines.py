@@ -1,9 +1,9 @@
 import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
-import plotly.io as pio
-                                                                         
-pio.kaleido.scope.chromium_args += ("--single-process",) 
+import os
+os.environ["BROWSER_PATH"] = "/usr/bin/chromium-browser"  # Replace with the actual path
+ 
 # Sidebar header
 st.sidebar.header("Gas Turbine EOH Input")
 
