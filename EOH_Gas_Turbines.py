@@ -17,11 +17,11 @@ data = []
 for i in range(num_gt):
     row = [
         st.text_input(f"GT {i+1} Name", f"GT{i+1}"),
-        st.number_input(f"Current EOH for GT {i+1}", min_value=0, max_value=100000, value=5000),
-        st.number_input(f"CI for GT {i+1}", min_value=0, max_value=100000, value=6000),
-        st.number_input(f"HGPI for GT {i+1}", min_value=0, max_value=100000, value=8000),
-        st.number_input(f"MI for GT {i+1}", min_value=0, max_value=100000, value=10000),
-        st.number_input(f"RLE for GT {i+1}", min_value=0, max_value=100000, value=12000)
+        st.number_input(f"Current EOH for GT {i+1}", min_value=0, max_value=250000, value=5000),
+        st.number_input(f"CI for GT {i+1}", min_value=0, max_value=250000, value=6000),
+        st.number_input(f"HGPI for GT {i+1}", min_value=0, max_value=250000, value=8000),
+        st.number_input(f"MI for GT {i+1}", min_value=0, max_value=250000, value=10000),
+        st.number_input(f"RLE for GT {i+1}", min_value=0, max_value=250000, value=12000)
     ]
     data.append(row)
 
