@@ -124,7 +124,8 @@ st.plotly_chart(fig)
 # Download options
 st.download_button(
     label="Download chart as PNG",
-    data=fig.to_image(format="png"),
+    data = fig.write_image('fig1.png', engine='orca'),
+    #data=fig.to_image(format="png"),
     file_name="gas_turbine_eoh_chart.png",
     mime="image/png"
 )
