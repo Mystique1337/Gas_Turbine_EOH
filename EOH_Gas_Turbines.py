@@ -1,12 +1,14 @@
 import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
-
+import plotly.io as pio
+                                                                         
+pio.kaleido.scope.chromium_args += ("--single-process",) 
 # Sidebar header
 st.sidebar.header("Gas Turbine EOH Input")
 
 # Input number of Gas Turbines
-num_gt = st.sidebar.number_input("Enter the number of Gas Turbines", min_value=1, max_value=20, value=3)
+num_gt = st.sidebar.number_input("Enter the number of Gas Turbines", min_value=1, max_value=20, value=15)
 
 # Data entry as a table
 st.write("### Enter EOH Data for Gas Turbines")
