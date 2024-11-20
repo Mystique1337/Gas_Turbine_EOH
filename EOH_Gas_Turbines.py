@@ -8,7 +8,7 @@ os.environ["BROWSER_PATH"] = "/usr/bin/chromium-browser"  # Replace with the act
 st.sidebar.header("Gas Turbine EOH Input")
 
 # Input number of Gas Turbines
-num_gt = st.sidebar.number_input("Enter the number of Gas Turbines", min_value=1, max_value=20, value=15)
+num_gt = st.sidebar.number_input("Enter the number of Gas Turbines", min_value=6, max_value=20, value=15)
 
 # Data entry as a table
 st.write("### Enter EOH Data for Gas Turbines")
