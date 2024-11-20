@@ -1,9 +1,7 @@
 import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
-import os
-os.environ["BROWSER_PATH"] = "/usr/bin/chromium-browser"  # Replace with the actual path
- 
+
 # Sidebar header
 st.sidebar.header("Gas Turbine EOH Input")
 
@@ -13,30 +11,36 @@ num_gt = st.sidebar.number_input("Enter the number of Gas Turbines", min_value=6
 # Data entry as a table
 st.write("### Enter EOH Data for Gas Turbines")
 columns = ['GT', 'Current EOH', 'CI', 'HGPI', 'MI', 'RLE']
-data = []
 
-# Input table for user data
-for i in range(num_gt):
-    row = [
-        st.text_input(f"GT {i+1} Name", f"GT{i+1}"),
-        st.number_input(f"Current EOH for GT {i+1}", min_value=0, max_value=250000, value=5000),
-        st.number_input(f"CI for GT {i+1}", min_value=0, max_value=250000, value=12000),
-        st.number_input(f"HGPI for GT {i+1}", min_value=0, max_value=250000, value=32000),
-        st.number_input(f"MI for GT {i+1}", min_value=0, max_value=250000, value=64000),
-        st.number_input(f"RLE for GT {i+1}", min_value=0, max_value=250000, value=200000)
-    ]
-    data.append(row)
+# Prepopulate data
+data = [
+    {
+        'GT': f"GT{i+1}",
+        'Current EOH': 5000,
+        'CI': 12000,
+        'HGPI': 32000,
+        'MI': 64000,
+        'RLE': 200000
+    } for i in range(num_gt)
+]
 
-# Create DataFrame
-df = pd.DataFrame(data, columns=columns)
+# Use Streamlit's experimental data editor
+df = st.data_editor(pd.DataFrame(data), key="data_editor")
 
 # Allow the user to add a new line plot
+st.write("### Add a New Line Plot")
 new_line_name = st.text_input("Enter new line plot name")
 new_line_values = st.text_area("Enter values for the new line plot (comma-separated)")
 
 if new_line_name and new_line_values:
-    new_line_values = [float(val) for val in new_line_values.split(',')]
-    df[new_line_name] = new_line_values
+    try:
+        new_line_values = [float(val) for val in new_line_values.split(',')]
+        if len(new_line_values) == len(df):
+            df[new_line_name] = new_line_values
+        else:
+            st.warning(f"Number of values must match the number of rows ({len(df)}).")
+    except ValueError:
+        st.error("Ensure all entered values are numeric.")
 
 # Display the data table
 st.write("### Data Table")
@@ -51,9 +55,7 @@ fig.add_trace(go.Bar(
     x=df['Current EOH'],
     orientation='h',
     name='Current EOH',
-    marker=dict(
-        color='grey',
-    ),
+    marker=dict(color='grey'),
     text=df['Current EOH'],
     textposition='outside',
     texttemplate='%{text:.0f}',
@@ -70,9 +72,9 @@ for col, color, dash in zip(['CI', 'HGPI', 'MI', 'RLE'], ['green', 'orange', 're
         line=dict(color=color, dash=dash, width=2)
     ))
 
-if new_line_name and new_line_values:
+if new_line_name and new_line_name in df.columns:
     fig.add_trace(go.Scatter(
-        x=new_line_values,
+        x=df[new_line_name],
         y=df['GT'],
         mode='lines',
         name=new_line_name,
@@ -81,10 +83,7 @@ if new_line_name and new_line_values:
 
 # Update layout for better readability
 fig.update_layout(
-    title=dict(
-        text='Gas Turbine EOH Chart',
-        font=dict(size=24, color='black', family='Arial', weight='bold')
-    ),
+    title="Gas Turbine EOH Chart",
     xaxis_title=dict(
         text='Hours',
         font=dict(size=18, color='black', family='Arial', weight='bold')
@@ -112,9 +111,9 @@ fig.update_layout(
     paper_bgcolor='white',
     hovermode='closest',
     legend=dict(
-        title='Legend',
+        title="Legend",
         font=dict(size=14, color='black'),
-        bordercolor='black',
+        bordercolor='black'
     )
 )
 
@@ -122,17 +121,26 @@ fig.update_layout(
 st.plotly_chart(fig)
 
 # Download options
+import io
+
+# Generate PNG
+png_buffer = io.BytesIO()
+fig.write_image(png_buffer, format="png")
+png_buffer.seek(0)
+
+# Generate HTML
+html_buffer = fig.to_html(full_html=False)
+
 st.download_button(
     label="Download chart as PNG",
-    data = fig.write_image('fig1.png', engine='orca'),
-    #data=fig.to_image(format="png"),
+    data=png_buffer,
     file_name="gas_turbine_eoh_chart.png",
     mime="image/png"
 )
 
 st.download_button(
     label="Download chart as HTML",
-    data=fig.to_html(),
+    data=html_buffer,
     file_name="gas_turbine_eoh_chart.html",
     mime="text/html"
 )
